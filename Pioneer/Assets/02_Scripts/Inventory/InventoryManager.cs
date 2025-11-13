@@ -154,6 +154,20 @@ public class InventoryManager : InventoryBase
         }
         
         InventoryUiMain.instance.IconRefresh();
+
+        Debug.Log($">> InventoryManager.Add(SItemStack item) : currentFabricationUi은 널인가? {InGameUI.instance.currentFabricationUi == null}");
+
+        if (InGameUI.instance.currentFabricationUi != null &&
+            InGameUI.instance.currentFabricationUi.enabled)
+        {
+            CommonUI.instance.UpdateCraftWindowUi(
+                InGameUI.instance.currentFabricationUi,
+                CommonUI.instance.LastRecipe,
+                this,
+                InGameUI.instance.outsideGameObjectCraftButtonsWithImage);
+        }
+
+        // CommonUI.instance.UpdateCraftWindowUi 호출(DefaultFabrication ui, SItemRecipeSO recipe, InventoryBase inventory, GameObject[] outsideGameObjectCraftButtonsWithImage)
     }
 
     public void SortSelf()

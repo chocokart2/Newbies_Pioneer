@@ -46,5 +46,6 @@ public class DefaultFabrication : MonoBehaviour
     private void Start()
     {
         closeTabButton.onClick.AddListener(() => CommonUI.instance.CloseTab(this));
+        gameObject.SetActive(false);
     }
 }

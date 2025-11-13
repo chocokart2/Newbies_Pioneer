@@ -39,6 +39,7 @@ public class InGameUI : MonoBehaviour, IBegin
     [HideInInspector]
     public DefaultFabrication currentFabricationUi;
     public PlayerStatUI playerStatUi;
+    public GameObject[] outsideGameObjectCraftButtonsWithImage;
 
     public List<GameObject> currentOpenedUI = new List<GameObject>();
     private List<GameObject> mainCraftSelectUi;

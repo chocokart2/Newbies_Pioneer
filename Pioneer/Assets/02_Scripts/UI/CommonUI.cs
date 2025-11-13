@@ -28,6 +28,9 @@ public class CommonUI : MonoBehaviour, IBegin
     private bool IsDebuggingCraftCoroutine => isDebugging && isDebugging_CraftCoroutine;
     Coroutine currentCraftCoroutine;
     SItemRecipeSO currentRecipe;
+    DefaultFabrication openedUi;
+    public SItemRecipeSO LastRecipe => currentRecipe;
+
 
     bool m_sCurrentCrafting = false;
     public bool IsCurrentCrafting
@@ -61,6 +64,7 @@ public class CommonUI : MonoBehaviour, IBegin
         {
             Debug.Log($">> CommonUI.UpdateCraftWindowUi(...) -> ÇÔ¼ö È£ÃâµÊ");
         }
+        InGameUI.instance.outsideGameObjectCraftButtonsWithImage = outsideGameObjectCraftButtonsWithImage;
 
         currentRecipe = recipe;
         SItemTypeSO recipeResultType = ItemTypeManager.Instance.itemTypeSearch[recipe.result.id];
