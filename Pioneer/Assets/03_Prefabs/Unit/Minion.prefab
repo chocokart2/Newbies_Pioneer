@@ -188,7 +188,7 @@ MonoBehaviour:
   dropOffset: {x: 0, y: -0.4, z: 0}
   fov: {fileID: 1546079290981050899}
   speed: 0
-  attackDamage: 0
+  attackDamage: 5
   attackRange: 0
   attackDelayTime: 0
   currentAttackTarget: {fileID: 0}
