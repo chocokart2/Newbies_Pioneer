@@ -68,7 +68,6 @@ public class PlayerAttack : MonoBehaviour, IBegin
 
     void ChangeAnim(Vector3 dir)
     {
-        Debug.LogError($"dir : {dir}");
         int idx = PlayerCore.Get4DirIndex(dir);
         
         if (idx < 0) return;

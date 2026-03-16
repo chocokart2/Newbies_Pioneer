@@ -85,7 +85,7 @@ public class PlayerFishing : MonoBehaviour
             if (CreatureEffect.Instance != null)
             {
                 ParticleSystem ps = CreatureEffect.Instance.Effects[8];
-                CreatureEffect.Instance.PlayEffect(ps, PlayerCore.Instance.transform.position + new Vector3(0f, -0.8f, 0.3f));
+                CreatureEffect.Instance.PlayEffect(ps, PlayerCore.Instance.transform.position + new Vector3(0f, -0.75f, 0.3f));
             }
             yield return new WaitForSeconds(2f);
 

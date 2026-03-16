@@ -28,7 +28,7 @@ public class TreasureBoxUI : MonoBehaviour
         itemImage.sprite = itemType.image;
 
         itemName.text = itemType.typeName;
-        itemCount.text = $"(x{sItemStack.amount})";
+        itemCount.text = $"x{sItemStack.amount}";
     }
 
     public void CloseWindow()

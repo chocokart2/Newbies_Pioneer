@@ -149,6 +149,8 @@ public class PlayerCore : CreatureBase, IBegin
     // 체력 29 이하 소리 한 번 출력 확인 bool 변수
     private bool isPlaySFXLowHp = false;
 
+    private StunHandler stunHandler;
+
     public SItemWeaponTypeSO CalculatedHandAttack
     {
         get
@@ -174,6 +176,7 @@ public class PlayerCore : CreatureBase, IBegin
     private Rigidbody playerRb;
     private bool isAttacking = false;
     private float defaultSpeed;
+    private float thunderSpeedMultiplier = 1f;
 
     public static event Action<int> PlayerHpChanged;
     public static event Action<int> PlayerFullnessChanged;
@@ -209,6 +212,7 @@ public class PlayerCore : CreatureBase, IBegin
     new void Start()
     {
         base.Start();
+        stunHandler = GetComponent<StunHandler>();
 
         UpdateFullnessState();
         StartCoroutine(FullnessSystemCoroutine());                   // 게임 시작시 포만감 계속 1씩 감소 시작
@@ -216,7 +220,10 @@ public class PlayerCore : CreatureBase, IBegin
 
     void Update()
     {
-        if(hp <= 0)
+        if (stunHandler != null && stunHandler.IsStunned)
+            return;
+
+        if (hp <= 0)
         {
             IsDead = true;
             WhenDestroy();
@@ -359,6 +366,21 @@ public class PlayerCore : CreatureBase, IBegin
 
         var v = moveInput.normalized * speed;
         playerRb.velocity = new Vector3(v.x, playerRb.velocity.y, v.z);
+    }
+
+    // =============================================================
+    // 뇌우 적용 : 이동속도 감소
+    // =============================================================
+    public void ApplyThunderSpeedModifier(float multiplier)
+    {
+        thunderSpeedMultiplier = multiplier;
+        UpdateFullnessState();
+    }
+
+    public void ResetThunderSpeedModifier()
+    {
+        thunderSpeedMultiplier = 1f;
+        UpdateFullnessState();
     }
 
     // =============================================================
@@ -516,20 +538,20 @@ public class PlayerCore : CreatureBase, IBegin
         else
             fullnessState = FullnessState.Starving;
 
+        float baseMoveSpeed;
         switch (fullnessState)
         {
             case FullnessState.Full:
-                speed = defaultSpeed * 1.2f;
-                break;
-            case FullnessState.Hungry:
+                baseMoveSpeed = defaultSpeed * 1.2f;
                 break;
             case FullnessState.Starving:
-                speed = defaultSpeed * 0.7f;
+                baseMoveSpeed = defaultSpeed * 0.7f;
                 break;
             default:
-                speed = defaultSpeed;
+                baseMoveSpeed = defaultSpeed;
                 break;
         }
+        speed = baseMoveSpeed * thunderSpeedMultiplier;
 
         if (fullnessState != currentFullnessState)
         {

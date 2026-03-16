@@ -56,7 +56,9 @@ public class CommonBase : MonoBehaviour, IBegin
         }
         else
         {
-            Debug.LogError($"[{gameObject.name}] SpriteRenderer를 찾을 수 없습니다!");
+            // SpriteRenderer가 없는 오브젝트는 피격 이펙트 생략
+            //Debug.LogError($"[{gameObject.name}] SpriteRenderer를 찾을 수 없습니다!");
+            return;
         }
     }
 
