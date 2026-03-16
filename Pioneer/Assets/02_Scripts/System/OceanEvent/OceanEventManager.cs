@@ -7,13 +7,20 @@ public class OceanEventManager : MonoBehaviour
 {
     public static OceanEventManager instance;
 
-    // ÀÓÀÇ·Î »ðÀÔ
     private List<OceanEventBase> allEvents;
     private List<OceanEventBase> remainingEvents;
     public OceanEventBase currentEvent;
     public TextMeshProUGUI currentEventName;
 
     private readonly List<Coroutine> runningCoroutines = new List<Coroutine>();
+
+    // ³ú¿ì
+    [SerializeField] private GameObject thunderEffect;
+    [SerializeField] private GameObject rainEffect;
+    [SerializeField] private float thunderInterval = 30f;
+    [SerializeField] private float thunderWarningDuration = 2f;
+    [SerializeField] private float thunderRadius = 3f;
+    [SerializeField] private float thunderStunDuration = 2f;
 
     private void Awake()
     {
@@ -30,8 +37,13 @@ public class OceanEventManager : MonoBehaviour
             new OceanEventNormal(),		// Æò¹ü
 			new OceanEventFog(),		// ¾È°³
 			new OceanEventSiren(),		// ¼¼ÀÌ·»
-			new OceanEventThunder(),    // ³ú¿ì
-			new OceanEventWaterBloom(),	// ³ìÁ¶
+			new OceanEventThunder(thunderEffect,
+                                  rainEffect,
+                                  thunderInterval,
+                                  thunderWarningDuration,
+                                  thunderRadius,
+                                  thunderStunDuration),
+            new OceanEventWaterBloom(),	// ³ìÁ¶
             new OceanEventWind()       // µ¹Ç³
 		};
 
@@ -58,7 +70,7 @@ public class OceanEventManager : MonoBehaviour
         //int selectedIndex = Random.Range(0, remainingEvents.Count);
         //currentEvent = remainingEvents[selectedIndex];
         //remainingEvents.RemoveAt(selectedIndex);
-        currentEvent = new OceanEventWaterBloom();
+        currentEvent = new OceanEventThunder(thunderEffect, rainEffect, thunderInterval, thunderWarningDuration, thunderRadius, thunderStunDuration);
         currentEvent.EventRun();
 
         Debug.Log($"[OceanEventManager][¿À´ÃÀÇ ¹Ù´ÙÀÌº¥Æ® : {currentEvent.EventName}]");
