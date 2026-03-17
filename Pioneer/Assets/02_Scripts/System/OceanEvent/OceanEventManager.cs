@@ -70,7 +70,7 @@ public class OceanEventManager : MonoBehaviour
         //int selectedIndex = Random.Range(0, remainingEvents.Count);
         //currentEvent = remainingEvents[selectedIndex];
         //remainingEvents.RemoveAt(selectedIndex);
-        currentEvent = new OceanEventThunder(thunderEffect, rainEffect, thunderInterval, thunderWarningDuration, thunderRadius, thunderStunDuration);
+        currentEvent = new OceanEventSiren();
         currentEvent.EventRun();
 
         Debug.Log($"[OceanEventManager][오늘의 바다이벤트 : {currentEvent.EventName}]");

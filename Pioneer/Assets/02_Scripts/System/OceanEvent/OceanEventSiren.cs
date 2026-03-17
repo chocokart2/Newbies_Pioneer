@@ -45,7 +45,7 @@ public class OceanEventSiren : OceanEventBase
 
         while (elapsed < totalDuration && IsRunning)
         {
-            yield return new WaitForSeconds(30f);
+            yield return new WaitForSeconds(5f);
             elapsed += 30f;
 
             if (!IsRunning) yield break;
@@ -110,8 +110,6 @@ public class OceanEventSiren : OceanEventBase
             Collider[] hits = Physics.OverlapBox(target.transform.position, new Vector3(4f, 1f, 4f));
             foreach (var hit in hits)
             {
-                if (hit.gameObject == target.gameObject) continue;
-
                 int layer = hit.gameObject.layer;
                 if (layer == LayerMask.NameToLayer("Player") || layer == LayerMask.NameToLayer("Mariner"))
                 {
