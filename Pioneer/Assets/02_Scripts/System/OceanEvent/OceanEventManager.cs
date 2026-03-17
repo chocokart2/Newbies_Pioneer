@@ -67,10 +67,13 @@ public class OceanEventManager : MonoBehaviour
             Debug.Log("[OceanEventManager][이벤트 목록 초기화]");
         }
 
+        // 전체 선택
         //int selectedIndex = Random.Range(0, remainingEvents.Count);
         //currentEvent = remainingEvents[selectedIndex];
         //remainingEvents.RemoveAt(selectedIndex);
-        currentEvent = new OceanEventSiren();
+
+        // 하나만 선택
+        currentEvent = new OceanEventFog();
         currentEvent.EventRun();
 
         Debug.Log($"[OceanEventManager][오늘의 바다이벤트 : {currentEvent.EventName}]");
