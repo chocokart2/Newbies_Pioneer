@@ -8336,6 +8336,13 @@ MonoBehaviour:
   thunderWarningDuration: 2
   thunderRadius: 2
   thunderStunDuration: 2
+  sirenDebuffEffectPrefab: {fileID: 4463460724980371824, guid: 56c724db92875684c8bbbbcebf2efc71,
+    type: 3}
+  sirenAppearLeftEffectPrefab: {fileID: 927584275950016700, guid: 0e5e941169895e74395a7dbe874d4f1f,
+    type: 3}
+  sirenAppearRightEffectPrefab: {fileID: 927584275950016700, guid: a89a539a60e1350418ecab94737dd1a1,
+    type: 3}
+  mainCamera: {fileID: 1897114962}
 --- !u!114 &1639034610 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7129295269457130677, guid: 54a06fb616bc02d4dbf545d5cdfcfae5,
@@ -25053,7 +25060,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 0
     m_RotationOrder: 4
-  dayDuration: 10
+  dayDuration: 20
   nightDuration: 10
   spawnPoints:
   - {fileID: 0}

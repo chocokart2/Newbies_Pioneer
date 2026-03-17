@@ -14,13 +14,19 @@ public class OceanEventManager : MonoBehaviour
 
     private readonly List<Coroutine> runningCoroutines = new List<Coroutine>();
 
-    // ³ú¿ì
+    [Header("³ú¿ì")]
     [SerializeField] private GameObject thunderEffect;
     [SerializeField] private GameObject rainEffect;
     [SerializeField] private float thunderInterval = 30f;
     [SerializeField] private float thunderWarningDuration = 2f;
     [SerializeField] private float thunderRadius = 3f;
     [SerializeField] private float thunderStunDuration = 2f;
+
+    [Header("¼¼ÀÌ·»")]
+    [SerializeField] private GameObject sirenDebuffEffectPrefab;
+    [SerializeField] private GameObject sirenAppearLeftEffectPrefab;
+    [SerializeField] private GameObject sirenAppearRightEffectPrefab;
+    [SerializeField] private Camera mainCamera;
 
     private void Awake()
     {
@@ -34,17 +40,20 @@ public class OceanEventManager : MonoBehaviour
 
         allEvents = new List<OceanEventBase>()
         {
-            new OceanEventNormal(),		// Æò¹ü
-			new OceanEventFog(),		// ¾È°³
-			new OceanEventSiren(),		// ¼¼ÀÌ·»
-			new OceanEventThunder(thunderEffect,
+            new OceanEventNormal(),		
+			new OceanEventFog(),		
+			new OceanEventSiren(sirenDebuffEffectPrefab,
+                                sirenAppearLeftEffectPrefab,
+                                sirenAppearRightEffectPrefab,
+                                mainCamera),
+            new OceanEventThunder(thunderEffect,
                                   rainEffect,
                                   thunderInterval,
                                   thunderWarningDuration,
                                   thunderRadius,
                                   thunderStunDuration),
-            new OceanEventWaterBloom(),	// ³ìÁ¶
-            new OceanEventWind()       // µ¹Ç³
+            new OceanEventWaterBloom(),	
+            new OceanEventWind()       
 		};
 
         ResetRemainingEvents();
@@ -68,13 +77,16 @@ public class OceanEventManager : MonoBehaviour
         }
 
         // ÀüÃ¼ ¼±ÅÃ
-        //int selectedIndex = Random.Range(0, remainingEvents.Count);
-        //currentEvent = remainingEvents[selectedIndex];
-        //remainingEvents.RemoveAt(selectedIndex);
+        int selectedIndex = Random.Range(0, remainingEvents.Count);
+        currentEvent = remainingEvents[selectedIndex];
+        remainingEvents.RemoveAt(selectedIndex);
 
         // ÇÏ³ª¸¸ ¼±ÅÃ
-        currentEvent = new OceanEventFog();
-        currentEvent.EventRun();
+        //currentEvent = new OceanEventSiren(sirenDebuffEffectPrefab, 
+        //                                   sirenAppearLeftEffectPrefab, 
+        //                                   sirenAppearRightEffectPrefab, 
+        //                                   mainCamera); 
+        //currentEvent.EventRun();
 
         Debug.Log($"[OceanEventManager][¿À´ÃÀÇ ¹Ù´ÙÀÌº¥Æ® : {currentEvent.EventName}]");
         currentEventName.text = currentEvent.EventName;

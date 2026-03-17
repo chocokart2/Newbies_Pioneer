@@ -7,16 +7,29 @@ public class OceanEventSiren : OceanEventBase
 {
     private readonly List<MarinerAI> charmedMariners = new List<MarinerAI>();
 
-    public OceanEventSiren()
+    private readonly GameObject sirenDebuffEffectPrefab;
+    private readonly GameObject sirenAppearLeftEffectPrefab;
+    private readonly GameObject sirenAppearRightEffectPrefab;
+    private readonly Camera mainCamera;
+
+    private readonly Dictionary<MarinerAI, GameObject> debuffEffects = new Dictionary<MarinerAI, GameObject>();
+
+    public OceanEventSiren(GameObject sirenDebuffEffectPrefab,
+                           GameObject sirenAppearLeftEffectPrefab,
+                           GameObject sirenAppearRightEffectPrefab,
+                           Camera mainCamera)
     {
         EventName = "세이렌";
+
+        this.sirenDebuffEffectPrefab = sirenDebuffEffectPrefab;
+        this.sirenAppearLeftEffectPrefab = sirenAppearLeftEffectPrefab;
+        this.sirenAppearRightEffectPrefab = sirenAppearRightEffectPrefab;
+        this.mainCamera = mainCamera;
     }
 
     public override void EventRun()
     {
         base.EventRun();
-
-        Debug.Log("[OceanEventSiren][세이렌 이벤트 시작]");
         OceanEventManager.instance.BeginCoroutine(CharmLoop());
     }
 
@@ -29,13 +42,19 @@ public class OceanEventSiren : OceanEventBase
             if (charmedMariners[i] == null) continue;
             if (charmedMariners[i].IsDead) continue;
 
+            RemoveDebuffEffect(charmedMariners[i]);
             charmedMariners[i].isCharmed = false;
             charmedMariners[i].RestartNormalAI();
         }
 
         charmedMariners.Clear();
 
-        Debug.Log("[OceanEventSiren][세이렌 이벤트 종료]");
+        foreach (var pair in debuffEffects)
+        {
+            if (pair.Value != null)
+                GameObject.Destroy(pair.Value);
+        }
+        debuffEffects.Clear();
     }
 
     private IEnumerator CharmLoop()
@@ -45,8 +64,8 @@ public class OceanEventSiren : OceanEventBase
 
         while (elapsed < totalDuration && IsRunning)
         {
-            yield return new WaitForSeconds(5f);
-            elapsed += 30f;
+            yield return new WaitForSeconds(30f); // 얘랑
+            elapsed += 30f;                       // 얘 둘다 바꿔야 함
 
             if (!IsRunning) yield break;
 
@@ -67,13 +86,14 @@ public class OceanEventSiren : OceanEventBase
     {
         target.isCharmed = true;
 
+        CreateDebuffEffect(target);
+        CreateAppearEffect(target);
+
         if (!charmedMariners.Contains(target))
             charmedMariners.Add(target);
 
         target.StopAllCoroutines();
         target.Agent.isStopped = false;
-
-        Debug.Log($"[OceanEventSiren][세이렌 매혹 시작 : {target.name}]");
 
         float charmDuration = 10f;
         float attackInterval = 1f;
@@ -85,11 +105,22 @@ public class OceanEventSiren : OceanEventBase
             yield return new WaitForSeconds(attackInterval);
             timer += attackInterval;
 
-            if (!IsRunning) yield break;
+            if (!IsRunning)
+            {
+                if (target != null && !target.IsDead)
+                {
+                    RemoveDebuffEffect(target);
+                    target.isCharmed = false;
+                    target.RestartNormalAI();
+                    charmedMariners.Remove(target);
+                }
+                yield break;
+            }
+
             if (target == null || target.IsDead) yield break;
 
             //플레이어 근처 클릭 3회 -> 해제
-            Collider[] cols = Physics.OverlapBox(target.transform.position, new Vector3(2f, 1f, 2f));
+            Collider[] cols = Physics.OverlapBox(target.transform.position, new Vector3(4f, 1f, 4f));
             foreach (var col in cols)
             {
                 if (col.gameObject.layer == LayerMask.NameToLayer("Player") && Input.GetMouseButtonDown(0))
@@ -97,7 +128,7 @@ public class OceanEventSiren : OceanEventBase
                     clickCount++;
                     if (clickCount >= 3)
                     {
-                        Debug.Log($"[OceanEventSiren][세이렌 매혹 해제 : {target.name}]");
+                        RemoveDebuffEffect(target);
                         target.isCharmed = false;
                         target.RestartNormalAI();
                         charmedMariners.Remove(target);
@@ -134,24 +165,54 @@ public class OceanEventSiren : OceanEventBase
             }
         }
 
-        if (!IsRunning)
-        {
-            if (target != null && !target.IsDead)
-            {
-                target.isCharmed = false;
-                target.RestartNormalAI();
-                charmedMariners.Remove(target);
-            }
-            yield break;
-        }
-
         if (target != null && !target.IsDead)
         {
-            Debug.Log($"[OceanEventSiren][세이렌 매혹 실패 사망 : {target.name}]");
+            RemoveDebuffEffect(target);
             target.IsDead = true;
             target.WhenDestroy();
             target.isCharmed = false;
             charmedMariners.Remove(target);
         }
+    }
+
+    private void CreateDebuffEffect(MarinerAI target)
+    {
+        if (target == null) return;
+        if (sirenDebuffEffectPrefab == null) return;
+        if (debuffEffects.ContainsKey(target)) return;
+
+        GameObject effect = GameObject.Instantiate(sirenDebuffEffectPrefab, target.transform);
+        effect.transform.localPosition = Vector3.zero;
+        debuffEffects.Add(target, effect);
+    }
+
+    private void RemoveDebuffEffect(MarinerAI target)
+    {
+        if (target == null) return;
+        if (!debuffEffects.ContainsKey(target)) return;
+
+        if (debuffEffects[target] != null)
+            GameObject.Destroy(debuffEffects[target]);
+
+        debuffEffects.Remove(target);
+    }
+
+    private void CreateAppearEffect(MarinerAI target)
+    {
+        if (target == null) return;
+        if (mainCamera == null) return;
+
+        Vector3 viewPos = mainCamera.WorldToViewportPoint(target.transform.position);
+        bool isLeft = viewPos.x < 0.5f;
+
+        GameObject prefab = isLeft ? sirenAppearLeftEffectPrefab : sirenAppearRightEffectPrefab;
+        if (prefab == null) return;
+
+        Vector3 spawnPos = mainCamera.transform.position;
+        spawnPos += mainCamera.transform.right * (isLeft ? -5f : 5f);
+        spawnPos += mainCamera.transform.up * 1.5f;
+        spawnPos += mainCamera.transform.forward * 8f;
+
+        GameObject.Instantiate(prefab, spawnPos, Quaternion.identity);
     }
 }
