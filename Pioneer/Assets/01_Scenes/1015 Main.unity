@@ -8376,10 +8376,19 @@ MonoBehaviour:
   sirenAppearRightEffect: {fileID: 927584275950016700, guid: a89a539a60e1350418ecab94737dd1a1,
     type: 3}
   mainCamera: {fileID: 1897114962}
-  sirenCheckInterval: 30
-  sirenCharmDuration: 10
-  sirenProcChance: 0.5
+  sirenCheckInterval: 5
+  sirenCharmDuration: 3
+  sirenProcChance: 1
   fogFade: {fileID: 1832681769}
+  windEffect: {fileID: 3239474330589372491, guid: 01fdfa40097a5fb4ebf7a58ea2945a69,
+    type: 3}
+  windInterval: 3
+  windMoveSpeed: 16
+  windLifetime: 5
+  windSpawnDistance: 10
+  windAirborneHeight: 3
+  windAirborneDuration: 1
+  windStunDuration: 2
 --- !u!114 &1639034610 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7129295269457130677, guid: 54a06fb616bc02d4dbf545d5cdfcfae5,

@@ -34,6 +34,16 @@ public class OceanEventManager : MonoBehaviour
     [Header("안개")]
     [SerializeField] private FogFade fogFade;
 
+    [Header("돌풍")]
+    [SerializeField] private GameObject windEffect;
+    [SerializeField] private float windInterval = 10f;
+    [SerializeField] private float windMoveSpeed = 16f;
+    [SerializeField] private float windLifetime = 5f;
+    [SerializeField] private float windSpawnDistance = 10f;
+    [SerializeField] private float windAirborneHeight = 4f;
+    [SerializeField] private float windAirborneDuration = 1f;
+    [SerializeField] private float windStunDuration = 2f;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -61,9 +71,16 @@ public class OceanEventManager : MonoBehaviour
                                   thunderWarningDuration,
                                   thunderRadius,
                                   thunderStunDuration),
-            new OceanEventWaterBloom(),	
-            new OceanEventWind()       
-		};
+            new OceanEventWaterBloom(),
+            new OceanEventWind(windEffect,
+                               windInterval,
+                               windMoveSpeed,
+                               windLifetime,
+                               windSpawnDistance,
+                               windAirborneHeight,
+                               windAirborneDuration,
+                               windStunDuration)
+        };
 
         ResetRemainingEvents();
 
@@ -88,17 +105,47 @@ public class OceanEventManager : MonoBehaviour
         }
 
         // 전체 선택
-        int selectedIndex = Random.Range(0, remainingEvents.Count);
-        currentEvent = remainingEvents[selectedIndex];
-        remainingEvents.RemoveAt(selectedIndex);
+        //int selectedIndex = Random.Range(0, remainingEvents.Count);
+        //currentEvent = remainingEvents[selectedIndex];
+        //remainingEvents.RemoveAt(selectedIndex);
 
-        // 하나만 선택
-        //currentEvent = new OceanEventSiren(sirenDebuffEffect,
-        //                                   sirenAppearLeftEffect,
-        //                                   sirenAppearRightEffect,
-        //                                   mainCamera);
-        //currentEvent.EventRun();
+        #region 하나만 선택
+        //// 평범 
+        //currentEvent = new OceanEventNormal();
 
+        //// 안개 
+        //currentEvent = new OceanEventFog(fogFade);
+
+        // 세이렌
+        currentEvent = new OceanEventSiren(sirenDebuffEffect,
+                                   sirenAppearLeftEffect,
+                                   sirenAppearRightEffect,
+                                   mainCamera,
+                                   sirenCheckInterval,
+                                   sirenCharmDuration,
+                                   sirenProcChance);
+
+        //// 뇌우
+        //currentEvent = new OceanEventThunder(thunderEffect,
+        //                             rainEffect,
+        //                             thunderInterval,
+        //                             thunderWarningDuration,
+        //                             thunderRadius,
+        //                             thunderStunDuration);
+
+        //// 녹조
+        //currentEvent = new OceanEventWaterBloom();
+
+        //// 돌풍
+        //currentEvent = new OceanEventWind(windEffect,
+        //                          windInterval,
+        //                          windMoveSpeed,
+        //                          windLifetime,
+        //                          windSpawnDistance,
+        //                          windAirborneHeight,
+        //                          windAirborneDuration,
+        //                          windStunDuration);
+        #endregion
         Debug.Log($"[OceanEventManager][오늘의 바다이벤트 : {currentEvent.EventName}]");
         currentEventName.text = currentEvent.EventName;
 
