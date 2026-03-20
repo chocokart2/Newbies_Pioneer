@@ -79,7 +79,7 @@ public class OceanEventSiren : OceanEventBase
 
             if (!IsRunning) yield break;
 
-            if (Random.value <= 0.5f) // 30초가 지날때마다 50퍼 확률로
+            if (Random.value <= procChance)
             {
                 MarinerAI[] mariners = GameObject.FindObjectsOfType<MarinerAI>();
                 if (mariners.Length == 0) continue;
@@ -105,7 +105,6 @@ public class OceanEventSiren : OceanEventBase
         target.StopAllCoroutines();
         target.Agent.isStopped = false;
 
-        float charmDuration = 10f;
         float attackInterval = 1f;
         int clickCount = 0;
         float timer = 0f;
