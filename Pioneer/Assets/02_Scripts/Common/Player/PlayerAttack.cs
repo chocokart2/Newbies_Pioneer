@@ -29,22 +29,16 @@ public class PlayerAttack : MonoBehaviour, IBegin
             other.GetComponent<CreatureBase>()?.TakeDamage(damage, this.gameObject);
             Debug.LogError($"damage : {damage}, this.gameObject : {this.gameObject}");
 
+            // 애니메이션 호출
+            ChangeAnim(playerController.lastMoveDirection);
+
             InventoryManager.Instance.ApplyItemDuablilityUsed();
 
             // 경험치 제공
             PlayerStatsLevel.Instance.AddExp(GrowStatType.Combat, damage);
             UnityEngine.Debug.Log($"AddExp() 호출");
+
         }
-    }
-
-    public void PlayAttack(Vector3 dir)
-    {
-        dir.y = 0f;
-
-        if (dir.sqrMagnitude < 0.0001f)
-            return;
-
-        ChangeAnim(dir.normalized);
     }
 
     public void EnableAttackCollider()
@@ -75,7 +69,7 @@ public class PlayerAttack : MonoBehaviour, IBegin
     void ChangeAnim(Vector3 dir)
     {
         int idx = PlayerCore.Get4DirIndex(dir);
-
+        
         if (idx < 0) return;
         ChangeAttackByIndex(idx);
     }
