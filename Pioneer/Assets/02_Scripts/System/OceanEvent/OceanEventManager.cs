@@ -21,12 +21,18 @@ public class OceanEventManager : MonoBehaviour
     [SerializeField] private float thunderWarningDuration = 2f;
     [SerializeField] private float thunderRadius = 3f;
     [SerializeField] private float thunderStunDuration = 2f;
-
+    
     [Header("세이렌")]
-    [SerializeField] private GameObject sirenDebuffEffectPrefab;
-    [SerializeField] private GameObject sirenAppearLeftEffectPrefab;
-    [SerializeField] private GameObject sirenAppearRightEffectPrefab;
+    [SerializeField] private GameObject sirenDebuffEffect;
+    [SerializeField] private GameObject sirenAppearLeftEffect;
+    [SerializeField] private GameObject sirenAppearRightEffect;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private float sirenCheckInterval = 30f;
+    [SerializeField] private float sirenCharmDuration = 10f;
+    [SerializeField] private float sirenProcChance = 0.5f;
+
+    [Header("안개")]
+    [SerializeField] private FogFade fogFade;
 
     private void Awake()
     {
@@ -40,12 +46,15 @@ public class OceanEventManager : MonoBehaviour
 
         allEvents = new List<OceanEventBase>()
         {
-            new OceanEventNormal(),		
-			new OceanEventFog(),		
-			new OceanEventSiren(sirenDebuffEffectPrefab,
-                                sirenAppearLeftEffectPrefab,
-                                sirenAppearRightEffectPrefab,
-                                mainCamera),
+            new OceanEventNormal(),
+            new OceanEventFog(fogFade),
+            new OceanEventSiren(sirenDebuffEffect,
+                                sirenAppearLeftEffect,
+                                sirenAppearRightEffect,
+                                mainCamera,
+                                sirenCheckInterval,
+                                sirenCharmDuration,
+                                sirenProcChance),
             new OceanEventThunder(thunderEffect,
                                   rainEffect,
                                   thunderInterval,
@@ -60,6 +69,8 @@ public class OceanEventManager : MonoBehaviour
 
         currentEvent = new OceanEventNormal();
         currentEvent.EventRun();
+
+        RemoveNormalFromRemainingEvents();
 
         Debug.Log($"[OceanEventManager][첫날 이벤트 : {currentEvent.EventName}]");
         currentEventName.text = currentEvent.EventName;
@@ -82,16 +93,29 @@ public class OceanEventManager : MonoBehaviour
         remainingEvents.RemoveAt(selectedIndex);
 
         // 하나만 선택
-        //currentEvent = new OceanEventSiren(sirenDebuffEffectPrefab, 
-        //                                   sirenAppearLeftEffectPrefab, 
-        //                                   sirenAppearRightEffectPrefab, 
-        //                                   mainCamera); 
+        //currentEvent = new OceanEventSiren(sirenDebuffEffect,
+        //                                   sirenAppearLeftEffect,
+        //                                   sirenAppearRightEffect,
+        //                                   mainCamera);
         //currentEvent.EventRun();
 
         Debug.Log($"[OceanEventManager][오늘의 바다이벤트 : {currentEvent.EventName}]");
         currentEventName.text = currentEvent.EventName;
 
         currentEvent.EventRun();
+    }
+    
+    // 첫날 평범한 날 예외때문에 이렇게 만들었는데 분명 더 좋은 방법이 있을거 같음
+    private void RemoveNormalFromRemainingEvents()
+    {
+        for (int i = remainingEvents.Count - 1; i >= 0; i--)
+        {
+            if (remainingEvents[i] is OceanEventNormal)
+            {
+                remainingEvents.RemoveAt(i);
+                break;
+            }
+        }
     }
 
     public void EnterNight()

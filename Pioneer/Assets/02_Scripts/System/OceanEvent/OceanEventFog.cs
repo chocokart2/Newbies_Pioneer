@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class OceanEventFog : OceanEventBase
 {
     private bool isDayFogApplied = false;
     private bool isNightFogApplied = false;
+    private readonly FogFade fogFade;
 
-    public OceanEventFog()
+    public OceanEventFog(FogFade fogFade)
     {
         EventName = "안개";
+        this.fogFade = fogFade;
     }
 
     public override void EventRun()
@@ -17,6 +20,9 @@ public class OceanEventFog : OceanEventBase
         base.EventRun();
 
         Debug.Log("[OceanEventFog][이벤트 시작]");
+
+        if (fogFade != null)
+            fogFade.ShowFog();
 
         ApplyMentalPenalty();
         ApplyDayFogVision();
@@ -35,6 +41,9 @@ public class OceanEventFog : OceanEventBase
     public override void EventEnd()
     {
         base.EventEnd();
+
+        if (fogFade != null)
+            fogFade.HideFog();
 
         RemoveDayFogVision();
         RemoveNightFogVision();

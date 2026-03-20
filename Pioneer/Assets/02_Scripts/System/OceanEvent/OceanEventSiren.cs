@@ -11,13 +11,19 @@ public class OceanEventSiren : OceanEventBase
     private readonly GameObject sirenAppearLeftEffectPrefab;
     private readonly GameObject sirenAppearRightEffectPrefab;
     private readonly Camera mainCamera;
+    private readonly float checkInterval;
+    private readonly float charmDuration;
+    private readonly float procChance;
 
     private readonly Dictionary<MarinerAI, GameObject> debuffEffects = new Dictionary<MarinerAI, GameObject>();
 
     public OceanEventSiren(GameObject sirenDebuffEffectPrefab,
                            GameObject sirenAppearLeftEffectPrefab,
                            GameObject sirenAppearRightEffectPrefab,
-                           Camera mainCamera)
+                           Camera mainCamera,
+                           float checkInterval,
+                           float charmDuration,
+                           float procChance)
     {
         EventName = "세이렌";
 
@@ -25,6 +31,10 @@ public class OceanEventSiren : OceanEventBase
         this.sirenAppearLeftEffectPrefab = sirenAppearLeftEffectPrefab;
         this.sirenAppearRightEffectPrefab = sirenAppearRightEffectPrefab;
         this.mainCamera = mainCamera;
+
+        this.checkInterval = checkInterval;
+        this.charmDuration = charmDuration;
+        this.procChance = procChance;
     }
 
     public override void EventRun()
@@ -64,8 +74,8 @@ public class OceanEventSiren : OceanEventBase
 
         while (elapsed < totalDuration && IsRunning)
         {
-            yield return new WaitForSeconds(30f); // 얘랑
-            elapsed += 30f;                       // 얘 둘다 바꿔야 함
+            yield return new WaitForSeconds(checkInterval);
+            elapsed += checkInterval;
 
             if (!IsRunning) yield break;
 
