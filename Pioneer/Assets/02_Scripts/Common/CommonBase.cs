@@ -14,7 +14,7 @@ public class CommonBase : MonoBehaviour, IBegin
 
     [Header("Hit Effect")]
     [Range(0f, 1f)] public float hitFlashAmount = 1f;
-    public float hitFlashDuration = 0.1f;
+    public float hitFlashDurations = 0.2f;
     public Color hitFlashColor = Color.white;
     public float hitFlashEmission = 2f;
 
@@ -134,7 +134,7 @@ public class CommonBase : MonoBehaviour, IBegin
         if (material.HasProperty(FlashAmountID))
             material.SetFloat(FlashAmountID, hitFlashAmount);
 
-        yield return new WaitForSeconds(hitFlashDuration);
+        yield return new WaitForSeconds(hitFlashDurations);
 
         if (material.HasProperty(FlashAmountID))
             material.SetFloat(FlashAmountID, 0f);
